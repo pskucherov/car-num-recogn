@@ -4,7 +4,7 @@ function VideoCapture() {
     this.fName  = '';
     this.fps    = 0;
     this.cntFrm = 0;
-};
+}
 
 VideoCapture.prototype.init = function(fNamePath) {
     var videoCap = cv.captureFromFile(fNamePath);
@@ -12,7 +12,7 @@ VideoCapture.prototype.init = function(fNamePath) {
     this.cntFrm  = cv.getCaptureProperty(videoCap, cv.CV_CAP_PROP_FRAME_COUNT);
     this.fps     = cv.getCaptureProperty(videoCap, cv.CV_CAP_PROP_FPS);
     if (!this.fps) {
-        throw new Error("Video not captured from " + fName);
+        throw new Error("Video not captured from " + fNamePath);
     }
     /*
      videoCap need cvReleaseCapture ... but ... "Segmentation fault" :(
@@ -21,9 +21,9 @@ VideoCapture.prototype.init = function(fNamePath) {
 
 VideoCapture.prototype.getFrame = function(pos) {
     var videoCap = cv.captureFromFile(this.fName);
-    cv.setCaptureProperty(videoCap, cv.CV_CAP_PROP_POS_FRAMES, parseInt(pos));
+    cv.setCaptureProperty(videoCap, cv.CV_CAP_PROP_POS_FRAMES, pos);
 
-    if ( !cv.grabFrame(videoCap) ) {
+    if (!cv.grabFrame(videoCap)) {
         throw new Error("Frame " + pos + " not grab");
     }
 
@@ -35,14 +35,14 @@ VideoCapture.prototype.getFrame = function(pos) {
 };
 
 VideoCapture.prototype.saveFrame = function(fNamePath, pos) {
-
+    var frame;
     try {
-        var frame = this.getFrame(pos);
-    } catch(e) {
+        frame = this.getFrame(pos);
+    } catch (e) {
         console.log(e);
         return false;
     }
-    cv.saveImage(fNamePath, this.getFrame(pos), 0);
+    cv.saveImage(fNamePath, frame, 0);
     return fNamePath;
 };
 
